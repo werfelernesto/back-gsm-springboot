@@ -33,8 +33,9 @@ public class SprigBootGsmApplication implements CommandLineRunner {
 		
 		Method m = c.getMethod("info", String.class);
 		
-		Object o = m.invoke(logger, "HOLA MUNDO");
-
+		//Object o = m.invoke(logger, "HOLA MUNDO");
+		m.invoke(logger, "HOLA MUNDO");
+		
 		//System.out.println(o);
 		
 		logger.info("Inet Adress localHost: " + InetAddress.getLocalHost().toString());

@@ -41,8 +41,12 @@ import com.ernesto.springboot.gsm.models.service.IUploadFileService;
 @RequestMapping("/api/articulo")
 public class ArticuloController {
 	
+	private static final String ARTICULO = "articulo";
+	
 	private static Logger logger = LoggerFactory.getLogger(ArticuloController.class);
-
+	
+	private String mensajeLog;
+	
 	@Autowired
 	private IUploadFileService uploadFileService;
 	
@@ -69,33 +73,46 @@ public class ArticuloController {
 	
 	@GetMapping("/articulo-por-id/{id}")
 	public Articulo articuloPorId(@PathVariable Long id) {
-		logger.info("En: articuloPorId() - id: " + id.toString());
+		
+		mensajeLog = String.format("En: articuloPorId() - id: %s ", id.toString());
+		logger.info(mensajeLog);
+		
 		return articuloService.findById(id);	
 	}
 	
 	@GetMapping("/articulo-por-descripcion/{descripcion}")
 	public List<Articulo> articuloPorDescripcion(@PathVariable String descripcion) {
-		logger.info("En: articuloPorDescripcion() - descripcion: " + descripcion);
+		
+		mensajeLog = String.format("En: articuloPorDescripcion() - descripcion: %s ", descripcion);
+		logger.info(mensajeLog);
 		return articuloService.findByDescripcionLike(descripcion);
 	}
 	
 	@GetMapping("/articulo-por-codigo-fabrica/{codigoFabrica}")
 	public List<Articulo> articuloPorCodigoFabrica(@PathVariable String codigoFabrica) {
-		logger.info("En: articuloPorCodigoFabrica() - codigoFabrica: " + codigoFabrica);
+		
+		mensajeLog = String.format("En: articuloPorCodigoFabrica() - codigoFabrica: %s ", codigoFabrica);
+		logger.info(mensajeLog);
 		return articuloService.findByCodigoFabricaLike(codigoFabrica);	
 	}
 	
 	@PostMapping("/articulo")
 	@ResponseStatus(HttpStatus.CREATED)
 	public Articulo add(@RequestBody Articulo articulo) {
-		logger.info("En: add() - articulo: " + articulo.toString());		
+		
+		
+		mensajeLog = String.format("En: add() - articulo: %s ", articulo.toString());
+		logger.info(mensajeLog);
+		
 		return articuloService.save(articulo);
 	}
 	
 	@PutMapping("/articulo/{id}")
 	@ResponseStatus(HttpStatus.CREATED)
 	public Articulo update(@PathVariable Long id, @RequestBody Articulo articulo) {
-		logger.info("En: update() - id: " + id.toString());
+		
+		mensajeLog = String.format("En: update() - id: %s ", id.toString());
+		logger.info(mensajeLog);
 		
 		if (articuloService.existsById(id)) {
 			return articuloService.save(articulo);
@@ -107,7 +124,9 @@ public class ArticuloController {
 	@DeleteMapping("/articulo/{id}")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void delete(@PathVariable Long id) {
-		logger.info("En: delete() - id: " + id.toString());
+		
+		mensajeLog = String.format("En: delete() - id: %s ", id.toString());
+		logger.info(mensajeLog);
 		articuloService.delete(id);
 	}
 
@@ -118,25 +137,25 @@ public class ArticuloController {
 	public ResponseEntity<Map<String,String>> guardarImagen(@PathVariable Long id, @RequestParam("imagen") MultipartFile imagen) {
 		logger.info("En: guardarImagen()");
 
-		Map<String, String> mensaje = new HashMap<String, String>();
+		Map<String, String> response = new HashMap<>();
 		
 		Articulo articulo = articuloService.findById(id);
 		
 		if (articulo == null) {
-			mensaje.put("error", "Hubo un error al guardar la imagen!. No existe el articulo!. NombreArchivo: " + imagen.getOriginalFilename());
+			response.put("error", "Hubo un error al guardar la imagen!. No existe el articulo!. NombreArchivo: " + imagen.getOriginalFilename());
 			return ResponseEntity
 						.status(HttpStatus.EXPECTATION_FAILED)
-						.body(mensaje);
+						.body(response);
 		}
 		
 		if (articulo.getImagen() != null && articulo.getImagen().length() > 0) {
-			uploadFileService.delete(articulo.getImagen(), "articulo");			
+			uploadFileService.delete(articulo.getImagen(), ARTICULO);			
 		}
 		
 		try {
 
-			String nombreImagen = uploadFileService.save(imagen, "articulo");
-			mensaje.put("ok", "La imagen se guardo con éxito!. Full Path: " + nombreImagen + " Nombre archivo: " + imagen.getOriginalFilename());
+			String nombreImagen = uploadFileService.save(imagen, ARTICULO);
+			response.put("ok", "La imagen se guardo con éxito!. Full Path: " + nombreImagen + " Nombre archivo: " + imagen.getOriginalFilename());
 			
 			articulo.setImagen(nombreImagen);
 			articuloService.save(articulo);
@@ -145,13 +164,12 @@ public class ArticuloController {
 			
 			return ResponseEntity
 					.ok()
-					.body(mensaje);
+					.body(response);
 		} catch (IOException e) {
-			mensaje.put("error", "Hubo un error al guardar la imagen!. NombreArchivo: " + imagen.getOriginalFilename() + " Mensaje Error: " + e.getMessage());
+			response.put("error", "Hubo un error al guardar la imagen!. NombreArchivo: " + imagen.getOriginalFilename() + " Mensaje Error: " + e.getMessage());
 			return ResponseEntity
 						.status(HttpStatus.EXPECTATION_FAILED)
-						.body(mensaje);
-			//e.printStackTrace();
+						.body(response);
 		}
 	}
 	
@@ -161,22 +179,25 @@ public class ArticuloController {
 
 		Resource recurso = null;
 		try {
-			recurso = uploadFileService.load(filename, "articulo");
+			recurso = uploadFileService.load(filename, ARTICULO);
 			
 			if (recurso == null) {
 				recurso = new UrlResource(Paths.get("C://uploads//no-img.jpg").toUri());	
-			}
+			} 
 			
-		} catch (MalformedURLException e) {
+			return ResponseEntity
+					.ok()
+					.contentType(MediaType.IMAGE_GIF)
+					.contentType(MediaType.IMAGE_PNG)
+					.contentType(MediaType.IMAGE_JPEG)
+					.header(HttpHeaders.CONTENT_DISPOSITION, "attacment; filename=\"" + recurso.getFilename() + "\"")
+					.body(recurso);
+			
+		} catch (MalformedURLException | NullPointerException e) {
 			e.printStackTrace();
 		}
 		
-		return ResponseEntity
-				.ok()
-				.contentType(MediaType.IMAGE_GIF)
-				.contentType(MediaType.IMAGE_PNG)
-				.contentType(MediaType.IMAGE_JPEG)
-				.header(HttpHeaders.CONTENT_DISPOSITION, "attacment; filename=\"" + recurso.getFilename() + "\"")
-				.body(recurso);
+		return null;
+
 	}
 }

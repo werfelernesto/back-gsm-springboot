@@ -26,6 +26,8 @@ public class UsuarioController {
 	
 	private static Logger logger = LoggerFactory.getLogger(UsuarioController.class);
 	
+	private String mensaje;
+	
 	@Autowired
 	private IUsuarioService usuarioService;
 	
@@ -40,7 +42,8 @@ public class UsuarioController {
 	@ResponseStatus(HttpStatus.CREATED)
 	public Usuario add(@RequestBody Usuario usuario) {
 	
-		logger.info("En: add() - usuario: " + usuario.toString());
+		mensaje = String.format("En: add() - usuario: %s ", usuario.toString());
+		logger.info(mensaje);
 		
 		Usuario usuarioDB = new Usuario();
 		
@@ -63,7 +66,8 @@ public class UsuarioController {
 	@ResponseStatus(HttpStatus.CREATED)
 	public Usuario udpdate(@PathVariable Long id, @RequestBody Usuario usuario) {
 		
-		logger.info("En: update() id: " + id.toString());
+		mensaje = String.format("En: update() id: %s ", id.toString());
+		logger.info(mensaje);
 		
 		Usuario usuarioDB = usuarioService.findById(usuario.getId());
 				
@@ -92,9 +96,5 @@ public class UsuarioController {
 
 		return usuarioService.save(usuarioDB);
 	}
-	
-	
-	
-	
 	
 }

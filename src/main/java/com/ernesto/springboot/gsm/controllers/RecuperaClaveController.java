@@ -25,6 +25,8 @@ import com.ernesto.springboot.gsm.models.service.IUsuarioService;
 public class RecuperaClaveController {
 
 	private static Logger logger = LoggerFactory.getLogger(RecuperaClaveController.class);
+
+	private Map<String, String> response = new HashMap<>();
 	
 	@Autowired
 	private IUsuarioService usuarioService;
@@ -35,18 +37,19 @@ public class RecuperaClaveController {
 	@Autowired
 	private IEmailService emailService;
 	
-	private Map<String, String> mensaje = new HashMap<String, String>();
-	
 	@GetMapping("/olvido-clave")
 	public ResponseEntity<Map<String, String>> olvidoClave(@RequestParam("email") String email) {
 	
-		logger.info("En: olvidoClave()- email: " + email);
+		String mensajeLog;
+		
+		mensajeLog = String.format("En: olvidoClave()- email: %s ", email);
+		logger.info(mensajeLog);
 		 
 		Usuario usuario = usuarioService.findByEmail(email);
 		
 		if (usuario == null) {
-			mensaje.put("error", "No existe el usuario con el email: " + email);
-			return ResponseEntity.ok().body(mensaje);	
+			response.put("error", "No existe el usuario con el email: " + email);
+			return ResponseEntity.ok().body(response);	
 		}
 		
 		TokenResetClave tokenResetClave = new TokenResetClave();
@@ -57,7 +60,8 @@ public class RecuperaClaveController {
 		
 		tokenResetClaveService.save(tokenResetClave);
 		
-		logger.info("En: olvidoClave() - tokenResetClave: " + tokenResetClave.toString());
+		mensajeLog = String.format("En: olvidoClave() - tokenResetClave: %s ", tokenResetClave.toString());
+		logger.info(mensajeLog);
 	
 		Email mail = new Email();
 		
@@ -66,9 +70,9 @@ public class RecuperaClaveController {
 		mail.setTexto("Siga el siguiente link para el blanqueo de la clave:"
 				+ " http://localhost:4200/api/claves/olvido-clave?token=" + tokenResetClave.getToken());
 		
-		mensaje = emailService.sendSimpleMail(mail);
+		response = emailService.sendSimpleMail(mail);
 		
-		return ResponseEntity.ok().body(mensaje);
+		return ResponseEntity.ok().body(response);
 		
 	}
 	

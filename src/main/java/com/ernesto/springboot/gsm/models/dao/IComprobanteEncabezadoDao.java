@@ -30,8 +30,12 @@ public interface IComprobanteEncabezadoDao extends JpaRepository<ComprobanteEnca
 	 * https://vladmihalcea.com/jpql-distinct-jpa-hibernate/
 	 * 
 	 */
-	//@Query("select ce from EncabezadoComprobante ce join fetch ce.cliente c join fetch ce.ComprobanteItem ci join fetch ci.articulo where f.id = ?1")
-	//public Factura fetchByIdWithClienteWithItemFacturaWithProducto(Long id);
+	
+	/*
+	 * @Query("select ce from EncabezadoComprobante ce join fetch ce.cliente c join fetch ce.ComprobanteItem ci join fetch ci.articulo where f.id = ?1")
+	 * public Factura fetchByIdWithClienteWithItemFacturaWithProducto(Long id);
+	 */
+	
 	@Query("select distinct ce "
 		+ "from ComprobanteEncabezado ce "
 		+ "join fetch ce.cliente c join fetch c.domicilio join fetch c.tipoIva "

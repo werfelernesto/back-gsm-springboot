@@ -25,6 +25,8 @@ public class ClienteController {
 
 	private static Logger logger = LoggerFactory.getLogger(ClienteController.class);
 	
+	private String mensajeLog;
+	
 	@Autowired
 	private IClienteService clienteService;
 	
@@ -37,13 +39,17 @@ public class ClienteController {
 	@PostMapping("/cliente")
 	@ResponseStatus(HttpStatus.CREATED)
 	public Cliente add(@RequestBody Cliente cliente) {
-		logger.info("En: add() - cliente: " + cliente.toString());
+		
+		mensajeLog = String.format("En: add() - cliente: %s ", cliente.toString());
+		logger.info(mensajeLog);
 		return clienteService.save(cliente);
 	}
 	
 	@PutMapping("/cliente/{id}")
 	public Cliente update(@RequestBody Cliente cliente, @PathVariable Long id) {
-		logger.info("En: update() - id: " + id.toString());
+		
+		mensajeLog = String.format("En: update() - id: %s ", id.toString());
+		logger.info(mensajeLog);
 		
 		if (clienteService.existsById(id)) {
 			return clienteService.save(cliente);
@@ -55,7 +61,10 @@ public class ClienteController {
 	@DeleteMapping("/cliente/{id}")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void delete(@PathVariable Long id) {
-		logger.info("En: delete() - id: " + id.toString());
+		
+		mensajeLog = String.format("En: delete() - id: %s ", id.toString());
+		logger.info(mensajeLog);
+		
 		clienteService.delete(id);
 	}
 	

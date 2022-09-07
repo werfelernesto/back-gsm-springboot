@@ -16,7 +16,7 @@ import com.ernesto.springboot.gsm.models.service.IComprobanteEncabezadoService;
 @RequestMapping("/api/comprobante")
 public class ComprobanteEncabezadoController {
 
-	private static Logger logger = LoggerFactory.getLogger(ComprobanteEncabezado.class);
+	private static Logger logger = LoggerFactory.getLogger(ComprobanteEncabezadoController.class);
 	
 	@Autowired
 	private IComprobanteEncabezadoService comprobanteEncabezadoService;

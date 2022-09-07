@@ -20,9 +20,11 @@ import org.springframework.web.multipart.MultipartFile;
 @Service
 public class UploadFileServiceImpl implements IUploadFileService {
 
-	private static final Logger logger = LoggerFactory.getLogger(IUploadFileService.class); 
+	private static final Logger logger = LoggerFactory.getLogger(UploadFileServiceImpl.class); 
 	
-	private static final String UPLOAD_ROOT_FOLDER = "C://uploads"; 
+	private static final String UPLOAD_ROOT_FOLDER = "C://uploads";
+	
+	private String mensaje;
 	
 	@Override
 	public void init() throws IOException {
@@ -42,7 +44,8 @@ public class UploadFileServiceImpl implements IUploadFileService {
 		 */
 		Path pathAbsoluto = getPath(nombreUnicoArchivo, carpeta);
 		
-		logger.info("En: save() - pathAbsoluto: " + pathAbsoluto.toString());
+		mensaje = String.format("En: save() - pathAbsoluto: %s ", pathAbsoluto.toString());
+		logger.info(mensaje);
 
 		/*
 		 * Copiamos en el disco
@@ -56,13 +59,13 @@ public class UploadFileServiceImpl implements IUploadFileService {
 	public Resource load(String filename, String carpeta) throws MalformedURLException {
 
 		Path pathImagen = getPath(filename, carpeta);
-		
-		logger.info("En: load() - pathImagen: " + pathImagen.toString());
+
+		mensaje = String.format("En: load() - pathImagen: %s ", pathImagen.toString());
+		logger.info(mensaje);
 		
 		Resource recurso = new UrlResource(pathImagen.toUri());
 		
 		if (!recurso.exists() || !recurso.isReadable()) {
-			//throw new RuntimeException("Error: El archivo esta corrupto: " + pathImagen.toString());	
 			return null; 
 		}
 				

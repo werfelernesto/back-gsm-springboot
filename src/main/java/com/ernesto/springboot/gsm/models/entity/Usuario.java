@@ -36,7 +36,7 @@ public class Usuario implements Serializable {
 	@JoinTable(name = "usuarios_roles",
 			joinColumns =  @JoinColumn(name = "usuario_id"),
 			inverseJoinColumns = @JoinColumn(name = "role_id"))
-	private Set<Role> roles = new HashSet<Role>();
+	private Set<Role> roles = new HashSet<>();
 	
 	private String imagen;
 	
@@ -95,7 +95,7 @@ public class Usuario implements Serializable {
 	}
 	
 	public void removeRole(Integer roleId) {
-		Role role = this.roles.stream().filter(r -> r.getId() == roleId).findFirst().orElse(null);
+		Role role = this.roles.stream().filter(r -> r.getId().equals(roleId)).findFirst().orElse(null);
 		if (role != null) {
 			this.roles.remove(role);
 			//role.getUsuarios().remove(this);

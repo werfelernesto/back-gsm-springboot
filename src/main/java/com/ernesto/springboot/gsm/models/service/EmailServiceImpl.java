@@ -5,6 +5,8 @@ import java.util.Map;
 
 import javax.mail.internet.MimeMessage;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
@@ -13,6 +15,7 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
 import com.ernesto.springboot.gsm.models.entity.Email;
+import java.util.Collections;
 
 /**
  * The interfaces and classes for Java mail support in the Spring framework are organized as follows:
@@ -29,6 +32,7 @@ import com.ernesto.springboot.gsm.models.entity.Email;
 @Service
 public class EmailServiceImpl implements IEmailService {
 
+	private static final Logger logger = LoggerFactory.getLogger(EmailServiceImpl.class);
 	/*
 	 * Interface provista por spring boot starter mail
 	 */
@@ -38,7 +42,7 @@ public class EmailServiceImpl implements IEmailService {
 	@Value("${spring.mail.username}")
 	private String envioDe;
 
-	private Map<String,String> respuesta = new HashMap<String, String>();
+	private Map<String,String> respuesta = new HashMap<>();
 	
 	@Override
 	public Map<String,String> sendSimpleMail(Email email) {
@@ -67,7 +71,7 @@ public class EmailServiceImpl implements IEmailService {
 	public Map<String,String> sendSimpleMailTemplate(Email email) {
 
 		
-		return null;
+		return Collections.emptyMap();
 	}
 	
 	@Override
@@ -87,12 +91,9 @@ public class EmailServiceImpl implements IEmailService {
 			mimeMessageHelper.setText(email.getTexto());
 			
 		} catch (Exception e) {
-
+			logger.debug(e.getMessage());
 		}
 		
-		return null;
+		return Collections.emptyMap();
 	}
-
-
-
 }

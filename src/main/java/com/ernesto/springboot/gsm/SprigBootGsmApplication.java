@@ -27,8 +27,8 @@ public class SprigBootGsmApplication implements CommandLineRunner {
 		//System.out.println("Class: toString()" + c.toString());
 		
 		//for (Method method : Calendar.class.getMethods() ) {
-		for (Method method : c.getMethods() ) {			
-			System.out.println("Class: getMethods() Class: " + c.getName() + " Methods: " +  method.getName() + " Args? " + method.isVarArgs()) ;
+		for (Method method : c.getMethods() ) {
+			logger.info(String.format("Class: getMethods() Class: %s Methods: %s Args? %s ", c.getName(), method.getName(), method.isVarArgs()));
 		}
 		
 		Method m = c.getMethod("info", String.class);
@@ -36,11 +36,14 @@ public class SprigBootGsmApplication implements CommandLineRunner {
 		//Object o = m.invoke(logger, "HOLA MUNDO");
 		m.invoke(logger, "HOLA MUNDO");
 		
-		//System.out.println(o);
+		String mensajeLog = InetAddress.getLocalHost().toString();
+		logger.info("Inet Adress localHost: {} ", mensajeLog);
 		
-		logger.info("Inet Adress localHost: " + InetAddress.getLocalHost().toString());
-		logger.info("Inet Adress loopbackadress: " + InetAddress.getLoopbackAddress().toString());
-		logger.info("Inet Adress: getByname. " + InetAddress.getByName("www.google.com"));
+		mensajeLog = InetAddress.getLoopbackAddress().toString();
+		logger.info("Inet Adress loopbackadress: {} ", mensajeLog);
+		
+		mensajeLog = InetAddress.getByName("www.google.com").toString();
+		logger.info("Inet Adress: getByname {} ", mensajeLog);
 		
 	}
 

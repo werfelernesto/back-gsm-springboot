@@ -91,14 +91,12 @@ public class Usuario implements Serializable {
 
 	public void addRole(Role role) {
 		this.roles.add(role);
-		//role.getUsuarios().add(this);
 	}
 	
 	public void removeRole(Integer roleId) {
 		Role role = this.roles.stream().filter(r -> r.getId().equals(roleId)).findFirst().orElse(null);
 		if (role != null) {
 			this.roles.remove(role);
-			//role.getUsuarios().remove(this);
 		}
 	}
 }
